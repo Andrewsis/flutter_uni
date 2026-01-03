@@ -7,13 +7,12 @@ A comprehensive mobile application built with **Flutter** and **Dart** designed 
 ## 🎯 Project Goal
 The primary objective of this project was to master the Flutter development lifecycle, including widget tree management, navigation stacks, and adaptive interface design according to **Material Design** principles.
 
-## 🚀 Key Features
-
-* **Main Dashboard:** A centralized navigation hub using a `GridView` to access all app modules, including Deadlines, Profile, and Health.
-* **Tasks & Deadlines:** A system for managing academic assignments with data persistence using `SharedPreferences` and `JSON` encoding.
-* **Student Profile:** A customizable profile section where users can edit their name, group, and email, as well as upload a profile picture using the `image_picker`.
-* **Health & Focus Tracker:** A dedicated module for wellness that includes a checklist-based habit tracker and a list for managing health tips.
-* **Data Persistence:** Uses `SharedPreferences` to ensure user data, such as tasks, habits, and profile information, is saved locally on the device.
+## Functionality
+* **Task Management:** Create, view, and delete academic assignments with persistent storage.
+* **Profile Customization:** Edit student information (name, group, email) and upload a profile picture from the gallery.
+* **Health Tracker:** Monitor daily habits and access wellness tips specifically for students.
+* **Local Data Persistence:** All user data is saved locally using SharedPreferences and JSON encoding.
+* **Error Handling:** Robust processing of data loading and local file paths.
 
 ## 🛠️ Technologies Used
 
@@ -37,14 +36,30 @@ The application is organized into a clean, screen-based architecture:
     ```bash
     git clone [https://github.com/andrewsis/student-portal-flutter.git](https://github.com/andrewsis/student-portal-flutter.git)
     ```
-2.  **Install dependencies:**
+2. Open this project in Android studio and launch emulator
+3.  **Install dependencies:**
     ```bash
     flutter pub get
     ```
-3.  **Run the application:**
+4.  **Run the application:**
     ```bash
     flutter run
     ```
 
+## Screenshots
+1. Main dashboard
+![Main dashboard](image.png)
+
+---
+2. Profile
+![Profile](image-1.png)
+
+---
+3. Tasks
+![Tasks](image-2.png)
+
+---
+4. Health
+![Health](image-3.png)
 ---
 *Developed as a practical university project to demonstrate proficiency in Flutter mobile development.*
