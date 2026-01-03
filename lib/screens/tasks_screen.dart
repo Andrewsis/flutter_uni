@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; // Потрібно для перетворення в JSON
+import 'dart:convert'; 
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -15,22 +15,19 @@ class _TasksScreenState extends State<TasksScreen> {
   @override
   void initState() {
     super.initState();
-    _loadTasks(); // Завантажуємо дані при старті
+    _loadTasks(); 
   }
 
-  // 1. ЗАВАНТАЖЕННЯ ДАНИХ
   Future<void> _loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
     final String? tasksString = prefs.getString('tasks_key'); // Читаємо рядок
 
     if (tasksString != null) {
-      // Якщо дані є, перетворюємо текст назад у список
       final List<dynamic> decodedList = jsonDecode(tasksString);
       setState(() {
         tasks = decodedList.map((item) => item as Map<String, dynamic>).toList();
       });
     } else {
-      // Якщо даних немає (перший запуск), додаємо стартовий приклад
       setState(() {
         tasks = [
           {'title': 'Приклад завдання', 'deadline': 'Завтра', 'desc': 'Це демо-завдання'}
@@ -39,11 +36,10 @@ class _TasksScreenState extends State<TasksScreen> {
     }
   }
 
-  // 2. ЗБЕРЕЖЕННЯ ДАНИХ
   Future<void> _saveTasks() async {
     final prefs = await SharedPreferences.getInstance();
-    final String encodedData = jsonEncode(tasks); // Перетворюємо список у текст
-    await prefs.setString('tasks_key', encodedData); // Зберігаємо
+    final String encodedData = jsonEncode(tasks); 
+    await prefs.setString('tasks_key', encodedData); 
   }
 
   final TextEditingController _titleController = TextEditingController();
@@ -76,7 +72,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       'desc': _descController.text,
                     });
                   });
-                  _saveTasks(); // <--- ЗБЕРІГАЄМО ПІСЛЯ ДОДАВАННЯ
+                  _saveTasks(); 
                   _titleController.clear();
                   _dateController.clear();
                   _descController.clear();
@@ -95,34 +91,46 @@ class _TasksScreenState extends State<TasksScreen> {
     setState(() {
       tasks.removeAt(index);
     });
-    _saveTasks(); // <--- ЗБЕРІГАЄМО ПІСЛЯ ВИДАЛЕННЯ
+    _saveTasks(); 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF0F4F2),
       appBar: AppBar(title: const Text('Завдання та Дедлайни')),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF2D6A4F),
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         onPressed: _addNewTask,
         child: const Icon(Icons.add),
       ),
       body: tasks.isEmpty
-          ? const Center(child: Text("Немає завдань."))
+          ? const Center(child: Text("Завдань немає. Відпочивайте!"))
           : ListView.builder(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(16),
               itemCount: tasks.length,
               itemBuilder: (context, index) {
                 final task = tasks[index];
-                return Dismissible(
-                  key: UniqueKey(), // Унікальний ключ для видалення
-                  onDismissed: (direction) => _deleteTask(index),
-                  background: Container(color: Colors.red, child: const Icon(Icons.delete, color: Colors.white)),
-                  child: Card(
+                return Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero, 
+                    side: BorderSide(color: Color(0xFFD8E2DC), width: 1),
+                  ),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      border: Border(left: BorderSide(color: Color(0xFF40916C), width: 6)),
+                    ),
                     child: ListTile(
-                      leading: CircleAvatar(child: const Icon(Icons.assignment)),
-                      title: Text(task['title']),
+                      title: Text(task['title'], style: const TextStyle(fontWeight: FontWeight.bold)),
                       subtitle: Text('${task['desc']}\nДедлайн: ${task['deadline']}'),
-                      isThreeLine: true,
+                      trailing: IconButton(
+                        icon: const Icon(Icons.check_circle_outline, color: Colors.teal),
+                        onPressed: () => _deleteTask(index),
+                      ),
                     ),
                   ),
                 );

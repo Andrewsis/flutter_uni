@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// Импортируем наши экраны
 import 'screens/home_screen.dart';
 import 'screens/tasks_screen.dart';
 import 'screens/profile_screen.dart';
@@ -15,15 +14,33 @@ class StudentPortalApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, // Убирает надпись DEBUG
+      debugShowCheckedModeBanner: false,
       title: 'Student Portal',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          primary: const Color(0xFF2D6A4F), 
+          secondary: const Color(0xFF52B788),
+          surface: const Color(0xFFF8FAF8), 
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF2D6A4F),
+            foregroundColor: Colors.white,
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4), 
+            ),
+          ),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF2D6A4F),
+          foregroundColor: Colors.white,
+          centerTitle: true,
+        ),
       ),
-      // ГЛАВНОЕ: Мы говорим, что при запуске нужно открыть '/'
       initialRoute: '/',
-      // И объясняем, что '/' — это HomeScreen
       routes: {
         '/': (context) => const HomeScreen(),
         '/tasks': (context) => const TasksScreen(),

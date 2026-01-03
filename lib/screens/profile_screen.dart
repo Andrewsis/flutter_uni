@@ -1,9 +1,9 @@
-import 'dart:io'; // Потрібно для роботи з файлами (File)
+import 'dart:io'; 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart'; // Для вибору фото
-import 'package:path_provider/path_provider.dart'; // Щоб знайти куди зберегти
-import 'package:path/path.dart' as path; // Для роботи з іменами файлів
+import 'package:image_picker/image_picker.dart'; 
+import 'package:path_provider/path_provider.dart'; 
+import 'package:path/path.dart' as path; 
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -16,7 +16,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String fullName = 'Завантаження...';
   String group = '';
   String email = '';
-  String? imagePath; // Тут буде шлях до нашого фото
+  String? imagePath; 
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       fullName = prefs.getString('name') ?? 'Петренко Петро';
       group = prefs.getString('group') ?? 'КН-301';
       email = prefs.getString('email') ?? 'student@univ.edu';
-      imagePath = prefs.getString('profile_image'); // Завантажуємо шлях до фото
+      imagePath = prefs.getString('profile_image'); 
     });
   }
 
@@ -41,24 +41,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.setString('email', e);
   }
 
-  // --- ЛОГІКА ВИБОРУ ФОТО ---
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    // Відкриваємо галерею
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      // 1. Отримуємо папку, де програма може зберігати файли
       final directory = await getApplicationDocumentsDirectory();
       
-      // 2. Створюємо нове ім'я файлу (наприклад, my_avatar.jpg)
       final String fileName = path.basename(image.path);
       final String localPath = path.join(directory.path, fileName);
 
-      // 3. Копіюємо обране фото в нашу папку (щоб воно не зникло)
       final File localImage = await File(image.path).copy(localPath);
 
-      // 4. Зберігаємо шлях у SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('profile_image', localPath);
 
@@ -106,65 +100,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Визначаємо, яке фото показувати
     ImageProvider avatarImage;
     if (imagePath != null && File(imagePath!).existsSync()) {
-      avatarImage = FileImage(File(imagePath!)); // Фото з файлу
+      avatarImage = FileImage(File(imagePath!)); 
     } else {
-      avatarImage = const AssetImage('assets/student_photo.jpg'); // Дефолтне фото
-      // Якщо у вас немає файлу assets/student_photo.jpg, розкоментуйте рядок нижче:
-      // avatarImage = const NetworkImage('https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
+      avatarImage = const AssetImage('assets/student_photo.jpg'); 
     }
 
-    return Scaffold(
+  return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Профіль'),
-        actions: [IconButton(onPressed: _editProfile, icon: const Icon(Icons.edit))],
+        title: const Text('Профіль студента'),
+        actions: [IconButton(onPressed: _editProfile, icon: const Icon(Icons.settings))],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            // --- АВАТАР З КНОПКОЮ КАМЕРИ ---
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 70,
-                  backgroundImage: avatarImage,
-                  backgroundColor: Colors.grey[200],
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: _pickImage, // Натискання викликає вибір фото
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                        color: Colors.blueAccent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+            Center(
+              child: Stack(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: const Color(0xFF2D6A4F), width: 2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: CircleAvatar(
+                      radius: 65,
+                      backgroundImage: avatarImage,
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    bottom: 5,
+                    right: 5,
+                    child: FloatingActionButton.small(
+                      onPressed: _pickImage,
+                      backgroundColor: const Color(0xFF52B788),
+                      child: const Icon(Icons.edit, size: 18),
+                    ),
+                  ),
+                ],
+              ),
             ),
+            const SizedBox(height: 25),
+            Text(fullName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF1B4332))),
+            const Text('Студент університету', style: TextStyle(color: Colors.grey, letterSpacing: 1.1)),
+            const SizedBox(height: 30),
             
-            const SizedBox(height: 20),
-            Text(fullName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Column(
-                  children: [
-                    _buildInfoRow('Група', group),
-                    const Divider(),
-                    _buildInfoRow('Email', email),
-                  ],
-                ),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7FDF9),
+                border: Border.all(color: const Color(0xFFB7E4C7)),
+              ),
+              child: Column(
+                children: [
+                  _buildInfoRow('ГРУПА', group),
+                  const Divider(height: 1, color: Color(0xFFB7E4C7)),
+                  _buildInfoRow('EMAIL', email),
+                ],
               ),
             ),
           ],

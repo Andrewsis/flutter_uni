@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert'; // Потрібно для збереження складних списків (JSON)
+import 'dart:convert'; 
 
 class HealthScreen extends StatefulWidget {
   const HealthScreen({super.key});
@@ -10,10 +10,8 @@ class HealthScreen extends StatefulWidget {
 }
 
 class _HealthScreenState extends State<HealthScreen> {
-  // 1. Список порад (просто текст)
   List<String> tips = [];
 
-  // 2. Список звичок (назва + статус виконано/ні)
   List<Map<String, dynamic>> habits = [];
 
   @override
@@ -22,23 +20,19 @@ class _HealthScreenState extends State<HealthScreen> {
     _loadData();
   }
 
-  // --- ЗАВАНТАЖЕННЯ ДАНИХ ---
   Future<void> _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      // Завантажуємо поради
       tips = prefs.getStringList('health_tips') ?? [
         'Правило 20-20-20: Кожні 20 хв дивись на 20 м протягом 20 с.',
         'Пий воду кожну годину.',
       ];
 
-      // Завантажуємо звички (декодуємо з JSON)
       String? habitsString = prefs.getString('health_habits');
       if (habitsString != null) {
         List<dynamic> decoded = jsonDecode(habitsString);
         habits = decoded.map((item) => item as Map<String, dynamic>).toList();
       } else {
-        // Дефолтні звички для старту
         habits = [
           {'title': 'Випити склянку води', 'done': false},
           {'title': 'Зробити розминку очей', 'done': false},
@@ -47,7 +41,6 @@ class _HealthScreenState extends State<HealthScreen> {
     });
   }
 
-  // --- ЗБЕРЕЖЕННЯ ДАНИХ ---
   Future<void> _saveTips() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('health_tips', tips);
@@ -55,11 +48,9 @@ class _HealthScreenState extends State<HealthScreen> {
 
   Future<void> _saveHabits() async {
     final prefs = await SharedPreferences.getInstance();
-    // Перетворюємо список об'єктів у текст JSON
     await prefs.setString('health_habits', jsonEncode(habits));
   }
 
-  // --- ДОДАВАННЯ ПОРАДИ ---
   void _addTip() {
     TextEditingController tipCtrl = TextEditingController();
     showDialog(
@@ -79,7 +70,7 @@ class _HealthScreenState extends State<HealthScreen> {
                 setState(() {
                   tips.add(tipCtrl.text);
                 });
-                _saveTips(); // Зберігаємо
+                _saveTips(); 
                 Navigator.pop(context);
               }
             },
@@ -90,7 +81,6 @@ class _HealthScreenState extends State<HealthScreen> {
     );
   }
 
-  // --- ДОДАВАННЯ ЗВИЧКИ ---
   void _addHabit() {
     TextEditingController habitCtrl = TextEditingController();
     showDialog(
@@ -106,7 +96,7 @@ class _HealthScreenState extends State<HealthScreen> {
                 setState(() {
                   habits.add({'title': habitCtrl.text, 'done': false});
                 });
-                _saveHabits(); // Зберігаємо
+                _saveHabits(); 
                 Navigator.pop(context);
               }
             },
@@ -117,7 +107,6 @@ class _HealthScreenState extends State<HealthScreen> {
     );
   }
 
-  // Видалення елементів (свайпом або кнопкою)
   void _deleteTip(int index) {
     setState(() {
       tips.removeAt(index);
@@ -141,7 +130,6 @@ class _HealthScreenState extends State<HealthScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- СЕКЦІЯ ПОРАД ---
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -151,25 +139,26 @@ class _HealthScreenState extends State<HealthScreen> {
             ),
             const SizedBox(height: 5),
             ...tips.asMap().entries.map((entry) {
-              int idx = entry.key;
-              String text = entry.value;
-              return Card(
-                color: Colors.blue[50],
-                margin: const EdgeInsets.only(bottom: 8),
+            return Card(
+                elevation: 0,
+                color: const Color(0xFFD8E2DC).withOpacity(0.5),
+                margin: const EdgeInsets.only(bottom: 10),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.zero, 
+                ),
                 child: ListTile(
-                  leading: const Icon(Icons.lightbulb, color: Colors.orange),
-                  title: Text(text),
+                  leading: const Icon(Icons.eco, color: Color(0xFF2D6A4F)),
+                  title: Text(entry.value, style: const TextStyle(fontSize: 14)),
                   trailing: IconButton(
-                    icon: const Icon(Icons.delete, size: 20, color: Colors.grey),
-                    onPressed: () => _deleteTip(idx),
+                    icon: const Icon(Icons.close, size: 16),
+                    onPressed: () => _deleteTip(entry.key),
                   ),
                 ),
               );
             }),
 
-            const Divider(height: 40, thickness: 2),
-
-            // --- СЕКЦІЯ ТРЕКЕРА ---
+            const Divider(height: 40),
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -196,7 +185,7 @@ class _HealthScreenState extends State<HealthScreen> {
                           setState(() {
                             habit['done'] = val;
                           });
-                          _saveHabits(); // Зберігаємо стан галочки
+                          _saveHabits(); 
                         },
                       ),
                     );
